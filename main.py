@@ -4,8 +4,8 @@ import pandas as pd
 import numpy as np
 
 # IMPORT SCRIPT
-from script.mysql import MySQL
-from script.postgresql import PostgreSQL
+from connection.mysql import MySQL
+from connection.postgresql import PostgreSQL
 
 # IMPORT SQL
 from sql.query import create_table_dim, create_table_fact
@@ -13,6 +13,7 @@ from sql.query import create_table_dim, create_table_fact
 
 with open ('credential.json', "r") as cred:
     credential = json.load(cred)
+
 
 def insert_raw_data():
     mysql_auth = MySQL(credential['mysql_lake'])
@@ -22,6 +23,7 @@ def insert_raw_data():
         data = json.load(data)
     
     df = pd.DataFrame(data['data']['content'])
+    
     df.columns = [x.lower() for x in df.columns.to_list()]
     df.to_sql(name='farid_raw_covid', con=engine, if_exists="replace", index=False)
     engine.dispose()
